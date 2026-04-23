@@ -51,6 +51,7 @@ CREATE TABLE orders (
     total REAL NOT NULL,
     status TEXT DEFAULT 'pending',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    ALTER TABLE orders ADD COLUMN status TEXT DEFAULT 'pending',
     FOREIGN KEY (user_id) REFERENCES users(id)
 );
 
@@ -63,4 +64,16 @@ CREATE TABLE order_items (
     price REAL NOT NULL,
     FOREIGN KEY (order_id) REFERENCES orders(id),
     FOREIGN KEY (product_id) REFERENCES products(id)
+);
+
+CREATE TABLE IF NOT EXISTS payments (
+    id          INTEGER PRIMARY KEY AUTOINCREMENT,
+    order_id    INTEGER NOT NULL,
+    user_id     INTEGER NOT NULL,
+    amount      REAL    NOT NULL,
+    method      TEXT    NOT NULL,      -- 'card' | 'cash' | 'virement'
+    status      TEXT    DEFAULT 'pending',  -- 'pending' | 'success' | 'failed'
+    created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (order_id) REFERENCES orders(id),
+    FOREIGN KEY (user_id)  REFERENCES users(id)
 );
